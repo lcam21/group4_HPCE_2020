@@ -1,9 +1,7 @@
+#include <stdio.h>
 
 void *malloc(size_t size){
-	mallocTotal++;
+	printf("\nPrueba 1\n");
 }
 
-void free(void *ptr){
-	freeTotal++;
-}
 	
