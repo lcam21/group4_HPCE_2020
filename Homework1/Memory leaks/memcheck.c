@@ -3,9 +3,9 @@
  * Course: MP-6171 High Performance Embedded Systems
  * Developers Name: Verny Morales and Luis Carlos Alvarez
  * Developers email: verny.morales@gmail.com and lcam03@gmail.com
- * General purpose: Composite Trapezoidal Rule Prototyping in Raspberry pi 4
- * Input: Lower value, upper value and sub-intervals
- * Output: numerical approximation
+ * General purpose: 
+ * Input: 
+ * Output: 
  *
  */
 
