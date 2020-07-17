@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <getopt.h>
+#include "libmemcheck.h"
 
 
 
