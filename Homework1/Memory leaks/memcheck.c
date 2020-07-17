@@ -21,6 +21,9 @@ int main (int argc, char **argv) {
 	int i = 0;
     int opt = -1;
 	int memoryLeakFlag = 0;
+	int infoAuhtorFlag = 0;
+	int infoExcutionAppFlag = 0;
+	
 	char *pathFile;
 	
 	
@@ -64,8 +67,6 @@ int main (int argc, char **argv) {
    }
    
    if (memoryLeakFlag == 1){
-	   printf("%s", pathFile);
+	   printf("%s\n", pathFile);
    }
-
-
 }
