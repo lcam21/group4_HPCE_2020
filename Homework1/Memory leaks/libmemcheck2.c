@@ -24,7 +24,7 @@ void __attribute__((destructor)) writeMemoryleaks();
 
 void writeMemoryleaks(){
 
-	fprint("Analysis finished!" 
+	printf("Analysis finished!" 
 			"\nMemory allocations: %d" 
 			"\nMemory free: %d "
 			"\nTotal memory leaks found: %d\n"

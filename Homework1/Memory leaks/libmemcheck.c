@@ -37,6 +37,7 @@ void *global_base = NULL;
 struct memoryleaks input1 = {0,0}; 
 FILE *outfile;
 int fileOpenFlag = 0;
+void __attribute__((destructor)) writeMemoryleaks(); 
 
 void writeMemoryleaks(){
 	//if (fileOpenFlag == 0){
@@ -47,10 +48,10 @@ void writeMemoryleaks(){
 	//fprintf(outfile,"%d-%d\n",input1.mallocNumber,input1.freeNumber);
 	//fclose (outfile); // close file 
 	
-	fprintf(stderr,"Analysis finished!" 
+	fprintf(stderr,"\nAnalysis finished!" 
 					"\nMemory allocations: %d" 
 					"\nMemory free: %d "
-					"\nTotal memory leaks found: %d\n"
+					"\nTotal memory leaks found: %d\n\n"
 					, input1.mallocNumber-1, input1.freeNumber, 
 					input1.mallocNumber-1-input1.freeNumber);
 }
@@ -114,7 +115,6 @@ void *malloc(size_t size) {
 	}
 	
 	input1.mallocNumber = input1.mallocNumber + 1;
-	writeMemoryleaks();
 	return(block+1);
 }
 
@@ -136,5 +136,4 @@ void free(void *ptr) {
 	block_ptr->magic = 0x55555555;
 	
 	input1.freeNumber = input1.freeNumber + 1;
-	writeMemoryleaks();
 }
