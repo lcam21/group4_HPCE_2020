@@ -15,6 +15,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdio.h>
 
 struct block_meta {
   size_t size;
@@ -25,6 +26,12 @@ struct block_meta {
 #define META_SIZE sizeof(struct block_meta)
 
 void *global_base = NULL;
+int mallocNumber = 0;
+int freeNumber = 0;
+
+void memoryleaks(){
+	printf("Malloc: %d \nFree: %d \n", mallocNumber, freeNumber);
+}
 
 struct block_meta *find_free_block(struct block_meta **last, size_t size) {
   struct block_meta *current = global_base;
@@ -82,7 +89,8 @@ void *malloc(size_t size) {
       block->magic = 0x77777777;
     }
   }
-
+  
+  mallocNumber++;
   return(block+1);
 }
 
@@ -92,7 +100,8 @@ struct block_meta *get_block_ptr(void *ptr) {
 
 void free(void *ptr) {
   if (!ptr) {
-    return;
+	  memoryleaks();
+	  return;
   }
 
   // TODO: consider merging blocks once splitting blocks is implemented.
@@ -101,6 +110,8 @@ void free(void *ptr) {
   assert(block_ptr->magic == 0x77777777 || block_ptr->magic == 0x12345678);
   block_ptr->free = 1;
   block_ptr->magic = 0x55555555;
+  freeNumber++;
+  memoryleaks();
 }
 
 void *realloc(void *ptr, size_t size) {
@@ -133,3 +144,4 @@ void *calloc(size_t nelem, size_t elsize) {
   memset(ptr, 0, size);
   return ptr;
 }
+
