@@ -17,6 +17,12 @@
 #include <unistd.h>
 #include <stdio.h>
 
+struct memoryleaks  
+{ 
+    int mallocNumber;
+	int freeNumber;
+}; 
+
 struct block_meta {
   size_t size;
   struct block_meta *next;
@@ -26,11 +32,33 @@ struct block_meta {
 #define META_SIZE sizeof(struct block_meta)
 
 void *global_base = NULL;
-int mallocNumber = 0;
-int freeNumber = 0;
+FILE *outfile;
+struct memoryleaks input1 = {0, 0}; 
 
-void memoryleaks(){
-	printf("Malloc: %d \nFree: %d \n", mallocNumber, freeNumber);
+void writeMemoryleaks(int pFlag){
+	// open file for writing 
+    outfile = fopen ("memoryleaks.dat", "w"); 
+    if (outfile == NULL) 
+    { 
+        fprintf(stderr, "\nError opend file\n"); 
+        exit (1); 
+    }
+	
+	if (pFlag == 0){
+		input1->mallocNumber++;
+	} else if (pFlag == 1){
+		input1->freeNumber++;
+	}
+	
+	fwrite (&input1, sizeof(struct memoryleaks), 1, outfile);
+	
+	if(fwrite != 0)  
+        printf("contents to file written successfully !\n"); 
+    else 
+        printf("error writing file !\n"); 
+  
+    // close file 
+    fclose (outfile); 
 }
 
 struct block_meta *find_free_block(struct block_meta **last, size_t size) {
@@ -64,7 +92,8 @@ struct block_meta *request_space(struct block_meta* last, size_t size) {
 void *malloc(size_t size) {
   struct block_meta *block;
   // TODO: align size?
-
+  
+  writeMemoryleaks(0);
   if (size <= 0) {
     return NULL;
   }
@@ -90,7 +119,6 @@ void *malloc(size_t size) {
     }
   }
   
-  mallocNumber++;
   return(block+1);
 }
 
@@ -99,19 +127,17 @@ struct block_meta *get_block_ptr(void *ptr) {
 }
 
 void free(void *ptr) {
-  if (!ptr) {
-	  memoryleaks();
-	  return;
-  }
+	writeMemoryleaks(1);
+	if (!ptr) {
+		return;
+	}
 
-  // TODO: consider merging blocks once splitting blocks is implemented.
-  struct block_meta* block_ptr = get_block_ptr(ptr);
-  assert(block_ptr->free == 0);
-  assert(block_ptr->magic == 0x77777777 || block_ptr->magic == 0x12345678);
-  block_ptr->free = 1;
-  block_ptr->magic = 0x55555555;
-  freeNumber++;
-  memoryleaks();
+	// TODO: consider merging blocks once splitting blocks is implemented.
+	struct block_meta* block_ptr = get_block_ptr(ptr);
+	assert(block_ptr->free == 0);
+	assert(block_ptr->magic == 0x77777777 || block_ptr->magic == 0x12345678);
+	block_ptr->free = 1;
+	block_ptr->magic = 0x55555555;
 }
 
 void *realloc(void *ptr, size_t size) {
