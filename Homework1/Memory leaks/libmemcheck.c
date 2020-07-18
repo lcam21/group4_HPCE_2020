@@ -33,7 +33,7 @@ int freeNumber = 0;
 void __attribute__((destructor)) writeMemoryleaks(); 
 
 void writeMemoryleaks(){
-	printf("\nAnalysis finished! \nMemory allocations: %d" 
+	printf("\n#Analysis finished! \nMemory allocations: %d" 
 			"\nMemory free: %d \nTotal memory leaks found: %d\n\n"
 			,mallocNumber-1, freeNumber, mallocNumber-1-freeNumber);
 }

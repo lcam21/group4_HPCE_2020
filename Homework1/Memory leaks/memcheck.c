@@ -11,10 +11,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <getopt.h>
-#include "libmemcheck.h"
-
-
 
 int main (int argc, char **argv) {
 	
@@ -25,6 +23,8 @@ int main (int argc, char **argv) {
 	int infoExcutionAppFlag = 0;
 	
 	char *pathFile;
+	char *const args[] = {pathFile, NULL};
+	char *const envp[] = {"LD_PRELOAD=./libmemcheck.so", NULL};
 	
 	
 	char usageMessage[] = "\n# USAGE MODE: \n"
@@ -33,15 +33,15 @@ int main (int argc, char **argv) {
 		"-h displays the usage message to let the user know how to execute the application. \n"
 		"-p PROGRAM specifies the path to the program binary that will be analyzed \n"
 		"Example:\n"
-		"./memcheck -p path/case4\n\n";
+		"./memcheck -p path/case4\n";
 	    
 	char authorsInfo[] = "\n# AUTHORS INFORMATION\n"
 		"# Tecnologico de Costa Rica (www.tec.ac.cr)\n"
 		"# Course: MP-6171 High Performance Embedded Systems\n"
 		"# Developers Name: Verny Morales and Luis Carlos Alvarez\n"
-		"# Developers email: verny.morales@gmail.com and lcam03@gmail.com\n\n";
+		"# Developers email: verny.morales@gmail.com and lcam03@gmail.com\n";
 	
-	while ((opt = getopt(argc, argv, "p:ah")) != -1) {
+	while ((opt = getopt(argc, argv, "ahp")) != -1) {
         i++;
         switch(opt) {
 			case 'p':
@@ -55,6 +55,8 @@ int main (int argc, char **argv) {
             case 'h':
                 infoExcutionAppFlag = 1;
                 break;
+			default:
+				printf("Error..");
 		 }
     }
 	
@@ -67,6 +69,7 @@ int main (int argc, char **argv) {
    }
    
    if (memoryLeakFlag == 1){
-	   printf("%s\n", pathFile);
+	   printf("\n#Analyzing the amount of memory leaks for the program: %s \n", pathFile);
+	   execve(pathFile,args,envp);
    }
 }
