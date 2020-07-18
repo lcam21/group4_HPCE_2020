@@ -84,36 +84,37 @@ struct block_meta *request_space(struct block_meta* last, size_t size) {
 }
 
 void *malloc(size_t size) {
-	input1.mallocNumber = input1.mallocNumber + 1;
-	writeMemoryleaks();
+	
 	struct block_meta *block;
 	// TODO: align size?
 
 	if (size <= 0) {
-	return NULL;
+		return NULL;
 	}
 
 	if (!global_base) { // First call.
-	block = request_space(NULL, size);
+		block = request_space(NULL, size);
 	if (!block) {
 	  return NULL;
 	}
 	global_base = block;
 	} else {
-	struct block_meta *last = global_base;
-	block = find_free_block(&last, size);
-	if (!block) { // Failed to find free block.
-	  block = request_space(last, size);
-	  if (!block) {
-		return NULL;
-	  }
-	} else {      // Found free block
-	  // TODO: consider splitting block here.
-	  block->free = 0;
-	  block->magic = 0x77777777;
+		struct block_meta *last = global_base;
+		block = find_free_block(&last, size);
+		if (!block) { // Failed to find free block.
+			block = request_space(last, size);
+			if (!block) {
+				return NULL;
+			}
+		} else {      // Found free block
+		// TODO: consider splitting block here.
+		block->free = 0;
+		block->magic = 0x77777777;
+		}
 	}
-	}
-
+	
+	input1.mallocNumber = input1.mallocNumber + 1;
+	writeMemoryleaks();
 	return(block+1);
 }
 
@@ -123,8 +124,6 @@ struct block_meta *get_block_ptr(void *ptr) {
 
 
 void free(void *ptr) {
-	input1.freeNumber = input1.freeNumber + 1;
-	writeMemoryleaks();
 	if (!ptr) {
 		return;
 	}
@@ -135,4 +134,7 @@ void free(void *ptr) {
 	assert(block_ptr->magic == 0x77777777 || block_ptr->magic == 0x12345678);
 	block_ptr->free = 1;
 	block_ptr->magic = 0x55555555;
+	
+	input1.freeNumber = input1.freeNumber + 1;
+	writeMemoryleaks();
 }
