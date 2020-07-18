@@ -4,7 +4,6 @@
 
 /*Initializing the block of memory*/
 void initialize(){
- printf("oopooop");
  freeList->size=20000-sizeof(struct block); 
  freeList->free=1;
  freeList->next=NULL;
@@ -35,6 +34,7 @@ As you can see from the code, I have set the attributes of both the new and fitt
 /*Function MyMalloc(malloc)*/
 void *malloc(size_t noOfBytes){
  
+ printf("Entro");
  struct block *curr,*prev;
  void *result;
  if(!(freeList->size)){ 
