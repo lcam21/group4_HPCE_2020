@@ -3,13 +3,12 @@
  * Course: MP-6171 High Performance Embedded Systems
  * Developers Name: Verny Morales and Luis Carlos Alvarez
  * Developers email: verny.morales@gmail.com and lcam03@gmail.com
- * General purpose: 
+ * General purpose: Analyze the amount of memory leaks
  * Input: 
- * Output: 
- *
+ * Output: Console mesage with amount of memory leaks
+ * Reference: https://danluu.com/malloc-tutorial/
+ * Compile: gcc -fPIC -shared -o libmemcheck.so libmemcheck.c
  */
-
-// gcc -fPIC -shared -o libmemcheck.so libmemcheck.c
 
 #include <assert.h>
 #include <string.h>
@@ -18,42 +17,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct memoryleaks { 
-    int mallocNumber;
-	int freeNumber;
-}; 
-
 struct block_meta {
   size_t size;
   struct block_meta *next;
   int free;
-  int magic; // For debugging only. TODO: remove this in non-debug mode.
+  int magic;
 };
 
 #define META_SIZE sizeof(struct block_meta)
 
-
 void *global_base = NULL;
-struct memoryleaks input1 = {0,0}; 
-FILE *outfile;
-int fileOpenFlag = 0;
+int mallocNumber = 0;
+int freeNumber = 0;
+
 void __attribute__((destructor)) writeMemoryleaks(); 
 
 void writeMemoryleaks(){
-	//if (fileOpenFlag == 0){
-	//	outfile = fopen("memoryleaks.dat", "w"); // open file for writing
-	//	fileOpenFlag = 1;
-	//}
-	//fwrite (&input1, sizeof(struct memoryleaks), 1, outfile); 
-	//fprintf(outfile,"%d-%d\n",input1.mallocNumber,input1.freeNumber);
-	//fclose (outfile); // close file 
-	
-	fprintf(stderr,"\nAnalysis finished!" 
-					"\nMemory allocations: %d" 
-					"\nMemory free: %d "
-					"\nTotal memory leaks found: %d\n\n"
-					, input1.mallocNumber-1, input1.freeNumber, 
-					input1.mallocNumber-1-input1.freeNumber);
+	printf("\nAnalysis finished! \nMemory allocations: %d" 
+			"\nMemory free: %d \nTotal memory leaks found: %d\n\n"
+			,mallocNumber-1, freeNumber, mallocNumber-1-freeNumber);
 }
 
 struct block_meta *find_free_block(struct block_meta **last, size_t size) {
@@ -87,7 +69,6 @@ struct block_meta *request_space(struct block_meta* last, size_t size) {
 void *malloc(size_t size) {
 	
 	struct block_meta *block;
-	// TODO: align size?
 
 	if (size <= 0) {
 		return NULL;
@@ -108,13 +89,12 @@ void *malloc(size_t size) {
 				return NULL;
 			}
 		} else {      // Found free block
-		// TODO: consider splitting block here.
 		block->free = 0;
 		block->magic = 0x77777777;
 		}
 	}
 	
-	input1.mallocNumber = input1.mallocNumber + 1;
+	mallocNumber++;
 	return(block+1);
 }
 
@@ -128,12 +108,11 @@ void free(void *ptr) {
 		return;
 	}
 
-	// TODO: consider merging blocks once splitting blocks is implemented.
 	struct block_meta* block_ptr = get_block_ptr(ptr);
 	assert(block_ptr->free == 0);
 	assert(block_ptr->magic == 0x77777777 || block_ptr->magic == 0x12345678);
 	block_ptr->free = 1;
 	block_ptr->magic = 0x55555555;
 	
-	input1.freeNumber = input1.freeNumber + 1;
+	freeNumber++;
 }
