@@ -39,13 +39,20 @@ FILE *outfile;
 int fileOpenFlag = 0;
 
 void writeMemoryleaks(){
-	if (fileOpenFlag == 0){
-		outfile = fopen("memoryleaks.dat", "w"); // open file for writing
-		fileOpenFlag = 1;
-	}
-	fwrite (&input1, sizeof(struct memoryleaks), 1, outfile); 
+	//if (fileOpenFlag == 0){
+	//	outfile = fopen("memoryleaks.dat", "w"); // open file for writing
+	//	fileOpenFlag = 1;
+	//}
+	//fwrite (&input1, sizeof(struct memoryleaks), 1, outfile); 
 	//fprintf(outfile,"%d-%d\n",input1.mallocNumber,input1.freeNumber);
 	//fclose (outfile); // close file 
+	
+	fprintf(stderr,"Analysis finished!" 
+					"\nMemory allocations: %d" 
+					"\nMemory free: %d "
+					"\nTotal memory leaks found: %d\n"
+					, input1.mallocNumber-1, input1.freeNumber, 
+					input1.mallocNumber-1-input1.freeNumber);
 }
 
 struct block_meta *find_free_block(struct block_meta **last, size_t size) {
@@ -78,7 +85,7 @@ struct block_meta *request_space(struct block_meta* last, size_t size) {
 
 void *malloc(size_t size) {
 	input1.mallocNumber = input1.mallocNumber + 1;
-	//writeMemoryleaks();
+	writeMemoryleaks();
 	struct block_meta *block;
 	// TODO: align size?
 
