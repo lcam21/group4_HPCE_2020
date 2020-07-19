@@ -24,7 +24,7 @@ int main (int argc, char **argv) {
 	
 	char *pathFile;
 	char *const args[] = {pathFile, NULL};
-	char *const envp[] = {"LD_PRELOAD=./libmemcheck.so", NULL};
+	char *const envp[] = {"LD_PRELOAD=../lib/.libs/libmemcheck.so", NULL};
 	
 	
 	char usageMessage[] = "\n# USAGE MODE: \n"
