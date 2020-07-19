@@ -42,3 +42,9 @@ luis@luis-K53E:~/Documents$ valgrind ./case2
 ==8956== For counts of detected and suppressed errors, rerun with: -v
 ==8956== Use --track-origins=yes to see where uninitialised values come from
 ==8956== ERROR SUMMARY: 7 errors from 5 contexts (suppressed: 0 from 0)
+
+
+
+Discusion de los errores:
+
+Como se observa en el codigo case2.c no se realiza ninguna inicializacion de memoria para ninguna de las variables utilizadas en el codigor. Esto es lo que esta generando los errores de jump ni de uninitialised. Se deben inicializar los espacios de memoria para la variable "a" e "i". Es por eso quese observa un error de asignacion de 8 Bytes, ya que ambas son enteros.

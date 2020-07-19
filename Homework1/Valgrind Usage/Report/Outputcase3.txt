@@ -19,3 +19,7 @@ luis@luis-K53E:~/Documents$ valgrind ./case3
 ==8957== 
 ==8957== For counts of detected and suppressed errors, rerun with: -v
 ==8957== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+
+Discusion del output file:
+
+Como se observa en el codigo fuente case3.c se estan realizando 10 asignaciones de memoria 10 veces del tamano de un entero, es decir 40000 Bytes. Al final del codigo unicamente se esta liberando un bloque de memoria de la variable a, como cada bloque es de 400 Bytes, Valgrind indica que existen aun 3600 Bytes de memoria que se perdieron ya que nunca fueron liberados.
