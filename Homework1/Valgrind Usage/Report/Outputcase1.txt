@@ -19,12 +19,3 @@ luis@luis-K53E:~/Documents$ valgrind ./case1
 ==8955== 
 ==8955== For counts of detected and suppressed errors, rerun with: -v
 ==8955== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
-
-
-Discusion del error:
- 
-Como se puede observar en case1.c se esta alocando un espacio de memoria equivalente a 10 enteros. Lo que el error nos esta diciendo es que se esta tratando de escribir en una zona de memoria donde no deberia. En este caso se esta tratando de alocar 4Bytes extra de lo esperado en la definicion de malloc, y son 4Bytes ya que una variable de tipo "int" equivale a 4 Bytes de memoria. 
-
-Nos dice ademas en que linea del codigo esta sucediendo el error, lo cual esta pasando en la linea 9. Como se observa esto es un ciclo que se va a repetir 11 veces, es decir se van a alocar 11 enteros en un espacio de memoria que se habia creado unicamente con 10 espacios dispo,ibles.
-
-Como se observa tambien nos indica que el bloque inicial es de 40 Bytes (4*10), mientras que lo que se necesitaba era un bloque de 44 Bytes.
