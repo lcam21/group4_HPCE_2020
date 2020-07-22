@@ -1,0 +1,147 @@
+
+root@raspberrypi4-64:~# ./coremark.exe 0x0 0x0 0x66 70000 7 1 2000
+2K performance run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 98273
+Total time (secs): 98.273000
+Iterations/Sec   : 712.301446
+Iterations       : 70000
+Compiler version : GCC9.2.0
+Compiler flags   : -O2 -DPERFORMANCE_RUN=1-lrt
+Memory location  : Please put data memory location here
+			(e.g. code in flash, data on heap etc)
+seedcrc          : 0xe9f5
+[0]crclist       : 0xe714
+[0]crcmatrix     : 0x1fd7
+[0]crcstate      : 0x8e3a
+[0]crcfinal      : 0x65c5
+Correct operation validated. See README.md for run and reporting rules.
+CoreMark 1.0 : 712.301446 / GCC9.2.0 -O2 -DPERFORMANCE_RUN=1-lrt / Heap
+root@raspberrypi4-64:~# ./coremark.exe 0x0 0x0 0x66 70000 7 1 2000
+2K performance run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 27359
+Total time (secs): 27.359000
+Iterations/Sec   : 2558.573047
+Iterations       : 70000
+Compiler version : GCC9.2.0
+Compiler flags   : -O2 -DPERFORMANCE_RUN=1-lrt
+Memory location  : Please put data memory location here
+			(e.g. code in flash, data on heap etc)
+seedcrc          : 0xe9f5
+[0]crclist       : 0xe714
+[0]crcmatrix     : 0x1fd7
+[0]crcstate      : 0x8e3a
+[0]crcfinal      : 0x65c5
+Correct operation validated. See README.md for run and reporting rules.
+CoreMark 1.0 : 2558.573047 / GCC9.2.0 -O2 -DPERFORMANCE_RUN=1-lrt / Heap
+root@raspberrypi4-64:~# 
+root@raspberrypi4-64:~# 
+root@raspberrypi4-64:~# 
+root@raspberrypi4-64:~# ./coremark.exe 0x0 0x0 0x66 70000 7 1 2000
+2K performance run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 42393
+Total time (secs): 42.393000
+Iterations/Sec   : 1651.216003
+Iterations       : 70000
+Compiler version : GCC9.2.0
+Compiler flags   : -O2 -DPERFORMANCE_RUN=1-lrt
+Memory location  : Please put data memory location here
+			(e.g. code in flash, data on heap etc)
+seedcrc          : 0xe9f5
+[0]crclist       : 0xe714
+[0]crcmatrix     : 0x1fd7
+[0]crcstate      : 0x8e3a
+[0]crcfinal      : 0x65c5
+Correct operation validated. See README.md for run and reporting rules.
+CoreMark 1.0 : 1651.216003 / GCC9.2.0 -O2 -DPERFORMANCE_RUN=1-lrt / Heap
+root@raspberrypi4-64:~# ./coremark.exe 0x0 0x0 0x66 70000 7 1 2000
+2K performance run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 21483
+Total time (secs): 21.483000
+Iterations/Sec   : 3258.390355
+Iterations       : 70000
+Compiler version : GCC9.2.0
+Compiler flags   : -O2 -DPERFORMANCE_RUN=1-lrt
+Memory location  : Please put data memory location here
+			(e.g. code in flash, data on heap etc)
+seedcrc          : 0xe9f5
+[0]crclist       : 0xe714
+[0]crcmatrix     : 0x1fd7
+[0]crcstate      : 0x8e3a
+[0]crcfinal      : 0x65c5
+Correct operation validated. See README.md for run and reporting rules.
+CoreMark 1.0 : 3258.390355 / GCC9.2.0 -O2 -DPERFORMANCE_RUN=1-lrt / Heap
+root@raspberrypi4-64:~# 
+root@raspberrypi4-64:~# 
+root@raspberrypi4-64:~# ./coremark.exe 0x0 0x0 0x66 70000 7 1 2000
+2K performance run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 20634
+Total time (secs): 20.634000
+Iterations/Sec   : 3392.459048
+Iterations       : 70000
+Compiler version : GCC9.2.0
+Compiler flags   : -O2 -DPERFORMANCE_RUN=1-lrt
+Memory location  : Please put data memory location here
+			(e.g. code in flash, data on heap etc)
+seedcrc          : 0xe9f5
+[0]crclist       : 0xe714
+[0]crcmatrix     : 0x1fd7
+[0]crcstate      : 0x8e3a
+[0]crcfinal      : 0x65c5
+Correct operation validated. See README.md for run and reporting rules.
+CoreMark 1.0 : 3392.459048 / GCC9.2.0 -O2 -DPERFORMANCE_RUN=1-lrt / Heap
+root@raspberrypi4-64:~# ./coremark.exe 0x0 0x0 0x66 70000 7 1 2000
+2K performance run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 20617
+Total time (secs): 20.617000
+Iterations/Sec   : 3395.256342
+Iterations       : 70000
+Compiler version : GCC9.2.0
+Compiler flags   : -O2 -DPERFORMANCE_RUN=1-lrt
+Memory location  : Please put data memory location here
+			(e.g. code in flash, data on heap etc)
+seedcrc          : 0xe9f5
+[0]crclist       : 0xe714
+[0]crcmatrix     : 0x1fd7
+[0]crcstate      : 0x8e3a
+[0]crcfinal      : 0x65c5
+Correct operation validated. See README.md for run and reporting rules.
+CoreMark 1.0 : 3395.256342 / GCC9.2.0 -O2 -DPERFORMANCE_RUN=1-lrt / Heap
+
+root@raspberrypi4-64:~# ./coremark.exe 0x0 0x0 0x66 70000 7 1 2000
+2K performance run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 20742
+Total time (secs): 20.742000
+Iterations/Sec   : 13499.180407
+Iterations       : 280000
+Compiler version : GCC9.2.0
+Compiler flags   : -O2 -DPERFORMANCE_RUN=1-lrt
+Parallel PThreads : 4
+Memory location  : Please put data memory location here
+			(e.g. code in flash, data on heap etc)
+seedcrc          : 0xe9f5
+[0]crclist       : 0xe714
+[1]crclist       : 0xe714
+[2]crclist       : 0xe714
+[3]crclist       : 0xe714
+[0]crcmatrix     : 0x1fd7
+[1]crcmatrix     : 0x1fd7
+[2]crcmatrix     : 0x1fd7
+[3]crcmatrix     : 0x1fd7
+[0]crcstate      : 0x8e3a
+[1]crcstate      : 0x8e3a
+[2]crcstate      : 0x8e3a
+[3]crcstate      : 0x8e3a
+[0]crcfinal      : 0x65c5
+[1]crcfinal      : 0x65c5
+[2]crcfinal      : 0x65c5
+[3]crcfinal      : 0x65c5
+Correct operation validated. See README.md for run and reporting rules.
+CoreMark 1.0 : 13499.180407 / GCC9.2.0 -O2 -DPERFORMANCE_RUN=1-lrt / Heap / 4:PThreads
+
