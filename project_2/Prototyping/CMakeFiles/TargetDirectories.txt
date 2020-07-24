@@ -1,0 +1,3 @@
+/home/luis/group4_HPCE_2020/project_2/Prototyping/CMakeFiles/rebuild_cache.dir
+/home/luis/group4_HPCE_2020/project_2/Prototyping/CMakeFiles/DisplayImage.dir
+/home/luis/group4_HPCE_2020/project_2/Prototyping/CMakeFiles/edit_cache.dir
