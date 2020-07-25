@@ -9,73 +9,100 @@
  *
  */
 
-//gcc rgb2yuv_c.c -o rgb2yuv_c `pkg-config --cflags opencv4 --libs opencv4`
-//./rgb2yuv_c -i image.rgb -o outputC.yuv
+//gcc -lpthread rgb2yuv_pthread.c -o rgb2yuv_pthread 
+//./rgb2yuv_pthread -i image.rgb -o outputPT.yuv
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <pthread.h>
 #include <time.h>  
 
 #define IMAGE_WIDTH  640
 #define IMAGE_HEIGHT 480
 
-int rgb2yuvPixel (int R, int G, int B){
+int rgb2yPixel (int R, int G, int B){
 	
-	int Y, V, U;
-
-	unsigned int pixel32;
-	unsigned char *pixel = (unsigned char *)&pixel32;
-
+	int Y;
 
 	Y = (0.257 * R) + (0.504 * G) + (0.098 * B) + 16;
-	V =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128;
-	U = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128;
-
 
  	if (Y > 255) {
 		Y = 255;
-	}
-
-	if (U > 255) {
-		U = 255;
-	}
-
-	if (V > 255) {
-		V = 255;
 	}
 
 	if (Y < 0) {
 		Y = 0;
 	}
 	
+	return Y;
+}
+
+int rgb2uPixel (int R, int G, int B){
+	
+	int U;
+
+	U = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128;
+
+	if (U > 255) {
+		U = 255;
+	}
+	
 	if (U < 0) {
 		U = 0;
+	}
+
+	return U;
+}
+
+int rgb2vPixel (int R, int G, int B){
+	
+	int V;
+
+	V =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128;
+
+	if (V > 255) {
+		V = 255;
 	}
 
 	if (V < 0) {
 		V = 0;
 	}
 
-	pixel[0] = Y;
-   	pixel[1] = U;
-  	pixel[2] = V;
-   	pixel[3] = 0;
-
-	return pixel32;
+	return V;
 }
+
 
 void rgb2yuv (char *input_image, char *output_image){
 
 	FILE *in, *out;
-	int R, G, B, i, size;	
+	int R, G, B, y2, i, size;	
 	unsigned int pixelRGB, pixel32;
 	unsigned char pixelYUV[3];
+	unsigned char *pixel = (unsigned char *)&pixel32;
 
 	in = fopen(input_image, "rb");
 	out = fopen(output_image, "wb");
 	if (!in  ||  !out) {
 		printf("Error..\n");
+	}
+	
+	iret1 = pthread_create( &thread1, NULL, rgb2yPixel, (void*) message1);
+	if(iret1) {
+		fprintf(stderr,"Error - pthread_create() return code: %d\n",iret1);
+		exit(EXIT_FAILURE);
+	}
+	
+	iret2 = pthread_create( &thread2, NULL, rgb2uPixel, (void*) message2);
+	if(iret2) {
+		fprintf(stderr,"Error - pthread_create() return code: %d\n",iret2);
+		exit(EXIT_FAILURE);
+	}
+	
+	iret3 = pthread_create( &thread3, NULL, rgb2vPixel, (void*) message3);
+	if(iret3) {
+		fprintf(stderr,"Error - pthread_create() return code: %d\n",iret3);
+		exit(EXIT_FAILURE);
 	}
 	
 	size = IMAGE_WIDTH*IMAGE_HEIGHT;
@@ -85,7 +112,13 @@ void rgb2yuv (char *input_image, char *output_image){
 		G  = ((pixelRGB & 0x0000ff00)>>8);
 		B  = ((pixelRGB & 0x00ff0000)>>16);
 	
-		pixel32 = rgb2yuvPixel(R, G, B);
+		//pixel32 = rgb2yuvPixel(R, G, B);
+		
+		pixel[0] = rgb2yPixel(R, G, B);
+		pixel[1] = rgb2uPixel(R, G, B);
+		pixel[2] = rgb2vPixel(R, G, B);
+		pixel[3] = 0;
+		
 		pixelYUV[0] = (pixel32 & 0x000000ff);
 		pixelYUV[1] = (pixel32 & 0x0000ff00) >> 8;
 		pixelYUV[2] = (pixel32 & 0x00ff0000) >> 16;
@@ -102,6 +135,12 @@ void rgb2yuv (char *input_image, char *output_image){
 int main (int argc, char **argv) {
 	
 	clock_t t;
+	
+	pthread_t thread1, thread2, thread3;
+    const char *message1 = "Thread 1";
+    const char *message2 = "Thread 2";
+    const char *message3 = "Thread 3";
+    int  iret1, iret2, iret3;
 	
 	int i = 0;
 	int opt = -1;
@@ -160,6 +199,7 @@ int main (int argc, char **argv) {
 	}
 
 	if (rgbFlag == 1 && yuvFlag == 1){
+		
 		t = clock();
 		rgb2yuv (pathRGBFile, pathYUVFile);
 		t = clock() - t;

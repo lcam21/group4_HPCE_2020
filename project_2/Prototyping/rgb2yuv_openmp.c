@@ -9,13 +9,14 @@
  *
  */
 
-//gcc rgb2yuv_c.c -o rgb2yuv_c `pkg-config --cflags opencv4 --libs opencv4`
-//./rgb2yuv_c -i image.rgb -o outputC.yuv
+//gcc -fopenmp rgb2yuv_openmp.c -o rgb2yuv_openmp
+//./rgb2yuv_openmp -i image.rgb -o outputOM.yuv
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
-#include <time.h>  
+#include <time.h>
+#include <omp.h>  
 
 #define IMAGE_WIDTH  640
 #define IMAGE_HEIGHT 480
@@ -68,7 +69,7 @@ int rgb2yuvPixel (int R, int G, int B){
 void rgb2yuv (char *input_image, char *output_image){
 
 	FILE *in, *out;
-	int R, G, B, i, size;	
+	int R, G, B, y2, i, size;	
 	unsigned int pixelRGB, pixel32;
 	unsigned char pixelYUV[3];
 
@@ -79,18 +80,23 @@ void rgb2yuv (char *input_image, char *output_image){
 	}
 	
 	size = IMAGE_WIDTH*IMAGE_HEIGHT;
-	for(i=0; i<size; i++){
-		fread(&pixelRGB, 3, 1, in);
-		R  = ((pixelRGB & 0x000000ff));
-		G  = ((pixelRGB & 0x0000ff00)>>8);
-		B  = ((pixelRGB & 0x00ff0000)>>16);
 	
-		pixel32 = rgb2yuvPixel(R, G, B);
-		pixelYUV[0] = (pixel32 & 0x000000ff);
-		pixelYUV[1] = (pixel32 & 0x0000ff00) >> 8;
-		pixelYUV[2] = (pixel32 & 0x00ff0000) >> 16;
+	#pragma omp parallel shared(in, out, pixelYUV, pixelRGB) private(i, R, G, B, pixel32) 
+	{
+		#pragma omp for  
+		for(i=0; i<size; i++){
+			fread(&pixelRGB, 3, 1, in);
+			R  = ((pixelRGB & 0x000000ff));
+			G  = ((pixelRGB & 0x0000ff00)>>8);
+			B  = ((pixelRGB & 0x00ff0000)>>16);
 
-		fwrite(pixelYUV, 3, 1, out);
+			pixel32 = rgb2yuvPixel(R, G, B);
+			pixelYUV[0] = (pixel32 & 0x000000ff);
+			pixelYUV[1] = (pixel32 & 0x0000ff00) >> 8;
+			pixelYUV[2] = (pixel32 & 0x00ff0000) >> 16;
+
+			fwrite(pixelYUV, 3, 1, out);	
+		}
 	}
 	
 	fclose(in);
@@ -168,3 +174,4 @@ int main (int argc, char **argv) {
 
 	return 0;
 }
+
