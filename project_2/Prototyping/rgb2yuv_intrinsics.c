@@ -1,45 +1,96 @@
+/*
+ * Tecnologico de Costa Rica (www.tec.ac.cr)
+ * Course: MP-6171 High Performance Embedded Systems
+ * Developers Name: Verny Morales and Luis Carlos Alvarez
+ * Developers email: verny.morales@gmail.com and lcam03@gmail.com
+ * General purpose: 
+ * Input: 
+ * Output: 
+ *
+ */
 
-//g++ rgb2yuv_cpp.cpp -o rgb2yuv_cpp `pkg-config --cflags opencv4 --libs opencv4`
-//./rgb2yuv_cpp -i image.jpg -o outputCJPG.yuv
+//gcc rgb2yuv_intrinsics.c -o rgb2yuv_intrinsics `pkg-config --cflags opencv4 --libs opencv4`
+//./rgb2yuv_c -i image.rgb -o outputIN.yuv
 
-#include <opencv2/opencv.hpp>
-#include <iostream>
-#include <fstream>
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
+#include <getopt.h>
 
-using namespace std;
-using namespace cv;
-
-#define IMAGE_WIDTH  640
-#define IMAGE_HEIGHT 480
-
-void saveYUV(Mat matYUV, char *fileNameYUV){
-
-	FILE *pFileYuv;
-	int bufLen = IMAGE_WIDTH * IMAGE_HEIGHT * 3;
-	unsigned char* pYuvBuf = new unsigned char[bufLen];
+int rgb2yuvPixel (int R, int G, int B){
 	
-	pFileYuv = fopen(fileNameYUV, "wb");
-	printf("Saving  YUV file..\n");
-	fwrite(matYUV.data, sizeof(unsigned char), bufLen, pFileYuv);
-	fclose(pFileYuv);
+	int Y, V, U;
 
-	pFileYuv = NULL;
-	delete [] pYuvBuf;
+	unsigned int pixel32;
+	unsigned char *pixel = (unsigned char *)&pixel32;
+
+
+	Y = (0.257 * R) + (0.504 * G) + (0.098 * B) + 16;
+	V =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128;
+	U = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128;
+
+
+ 	if (Y > 255) {
+		Y = 255;
+	}
+
+	if (U > 255) {
+		U = 255;
+	}
+
+	if (V > 255) {
+		V = 255;
+	}
+
+	if (Y < 0) {
+		Y = 0;
+	}
+	
+	if (U < 0) {
+		U = 0;
+	}
+
+	if (V < 0) {
+		V = 0;
+	}
+
+	pixel[0] = Y;
+   	pixel[1] = U;
+  	pixel[2] = V;
+   	pixel[3] = 0;
+
+	return pixel32;
 }
 
 void rgb2yuv (char *input_image, char *output_image){
 
-	Mat matRGB, matYUV;
-	
-	printf("Opening the image..\n");
-	matRGB = imread(input_image, IMREAD_COLOR);
+	FILE *in, *out;
+	int R, G, B, y2;	
+	unsigned int pixelRGB, pixel32;
+	unsigned char pixelYUV[3];
 
-	printf("Converting  RGB  to YUV..\n");
-	cvtColor(matRGB, matYUV, COLOR_BGR2YUV);
+	in = fopen(input_image, "rb");
+	out = fopen(output_image, "wb");
+	if (!in  ||  !out) {
+		printf("Error..\n");
+	}
+
+	for(int i=0; i<640*480; i++){
+		fread(&pixelRGB, 3, 1, in);
+		R  = ((pixelRGB & 0x000000ff));
+		G  = ((pixelRGB & 0x0000ff00)>>8);
+		B  = ((pixelRGB & 0x00ff0000)>>16);
 	
-	saveYUV(matYUV, output_image);
+		pixel32 = rgb2yuvPixel(R, G, B);
+		pixelYUV[0] = (pixel32 & 0x000000ff);
+		pixelYUV[1] = (pixel32 & 0x0000ff00) >> 8;
+		pixelYUV[2] = (pixel32 & 0x00ff0000) >> 16;
+
+		fwrite(pixelYUV, 3, 1, out);
+	}
+	
+	fclose(in);
+	fclose(out);
+
 }
 
 
@@ -107,15 +158,4 @@ int main (int argc, char **argv) {
 
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
 
