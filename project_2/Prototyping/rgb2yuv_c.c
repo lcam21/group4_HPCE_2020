@@ -10,6 +10,7 @@
  */
 
 //gcc rgb2yuv_c.c -o rgb2yuv_c `pkg-config --cflags opencv4 --libs opencv4`
+//./rgb2yuv_c -i image.rgb -o outputC.yuv
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -73,7 +74,6 @@ void rgb2yuv (char *input_image, char *output_image){
 		printf("Error..\n");
 	}
 
-	printf("Entro..\n");
 	for(int i=0; i<640*480; i++){
 		fread(&pixelRGB, 3, 1, in);
 		R  = ((pixelRGB & 0x000000ff));
@@ -153,7 +153,6 @@ int main (int argc, char **argv) {
 	}
 
 	if (rgbFlag == 1 && yuvFlag == 1){
-		printf("RGB: %s - YUV: %s\n", pathRGBFile, pathYUVFile);
 		rgb2yuv (pathRGBFile, pathYUVFile);
 	}
 
