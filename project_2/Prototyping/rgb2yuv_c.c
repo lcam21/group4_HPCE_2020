@@ -65,7 +65,7 @@ int rgb2yuvPixel (int R, int G, int B){
 	return pixel32;
 }
 
-void rgb2yuv (char *input_image, char *output_image){
+void rgb2yuv(char *input_image, char *output_image){
 
 	FILE *in, *out;
 	int R, G, B, i, size;	
@@ -161,7 +161,7 @@ int main (int argc, char **argv) {
 
 	if (rgbFlag == 1 && yuvFlag == 1){
 		t = clock();
-		rgb2yuv (pathRGBFile, pathYUVFile);
+		rgb2yuv(pathRGBFile, pathYUVFile);
 		t = clock() - t;
 		printf ("It took me %ld clicks (%f seconds).\n",t,((float)t)/CLOCKS_PER_SEC);
 	}

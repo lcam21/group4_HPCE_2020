@@ -70,8 +70,9 @@ void rgb2yuv (char *input_image, char *output_image){
 
 	FILE *in, *out;
 	int R, G, B, y2, i, size;	
-	unsigned int pixelRGB, pixel32;
-	unsigned char pixelYUV[3];
+	size = IMAGE_WIDTH*IMAGE_HEIGHT;
+	unsigned int pixelRGB[size], pixel32;
+	unsigned char pixelYUV[size][3];
 
 	in = fopen(input_image, "rb");
 	out = fopen(output_image, "wb");
@@ -79,24 +80,31 @@ void rgb2yuv (char *input_image, char *output_image){
 		printf("Error..\n");
 	}
 	
-	size = IMAGE_WIDTH*IMAGE_HEIGHT;
 	
-	#pragma omp parallel shared(in, out, pixelYUV, pixelRGB) private(i, R, G, B, pixel32) 
+	for(i=0; i<size; i++){
+		fread(&pixelRGB[i], 3, 1, in);
+	}
+	
+	#pragma omp parallel shared(pixelYUV, pixelRGB, size) private(i, R, G, B, pixel32) 
 	{
 		#pragma omp for  
 		for(i=0; i<size; i++){
-			fread(&pixelRGB, 3, 1, in);
-			R  = ((pixelRGB & 0x000000ff));
-			G  = ((pixelRGB & 0x0000ff00)>>8);
-			B  = ((pixelRGB & 0x00ff0000)>>16);
+			
+			R  = ((pixelRGB[i] & 0x000000ff));
+			G  = ((pixelRGB[i] & 0x0000ff00)>>8);
+			B  = ((pixelRGB[i] & 0x00ff0000)>>16);
 
 			pixel32 = rgb2yuvPixel(R, G, B);
-			pixelYUV[0] = (pixel32 & 0x000000ff);
-			pixelYUV[1] = (pixel32 & 0x0000ff00) >> 8;
-			pixelYUV[2] = (pixel32 & 0x00ff0000) >> 16;
+			
+			pixelYUV[i][0] = (pixel32 & 0x000000ff);
+			pixelYUV[i][1] = (pixel32 & 0x0000ff00) >> 8;
+			pixelYUV[i][2] = (pixel32 & 0x00ff0000) >> 16;
 
-			fwrite(pixelYUV, 3, 1, out);	
 		}
+	}
+	
+	for(i=0; i<size; i++){
+		fwrite(pixelYUV[i], 3, 1, out);
 	}
 	
 	fclose(in);
