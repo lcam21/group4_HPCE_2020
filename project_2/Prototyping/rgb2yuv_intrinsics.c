@@ -1,1 +1,196 @@
+/*
+ * Tecnologico de Costa Rica (www.tec.ac.cr)
+ * Course: MP-6171 High Performance Embedded Systems
+ * Developers Name: Verny Morales and Luis Carlos Alvarez
+ * Developers email: verny.morales@gmail.com and lcam03@gmail.com
+ * General purpose: 
+ * Input: 
+ * Output: 
+ *
+ */
+
+//gcc rgb2yuv_c.c -o rgb2yuv_c `pkg-config --cflags opencv4 --libs opencv4`
+//./rgb2yuv_c -i image.rgb -o outputC.yuv
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <getopt.h>
+#include <time.h> 
+#include <arm_neon.h> 
+
+#define IMAGE_WIDTH  640
+#define IMAGE_HEIGHT 480
+
+int16x4_t  rgb2yuvPixel (int32_t  R, int32_t  G, int32_t  B){
+	
+	int32_t  Y, V, U;
+	int32_t aux1, aux2, aux3, aux4;
+
+	uint32_t  pixel32;
+	unsigned char *pixel = (unsigned char *)&pixel32;
+
+	aux1 = vmul_u32(0.257, R);
+	aux2 = vmul_u32(0.504, G);
+	aux3 = vmul_u32(0.098, B);
+	aux4 = vadd_u32(aux1, aux2);
+	aux4 = vadd_u32(aux4, aux3);
+	Y = vadd_u32(aux4, 16);
+	//Y = (0.257 * R) + (0.504 * G) + (0.098 * B) + 16;
+	
+	aux1 = vmul_u32(0.439, R);
+	aux2 = vmul_u32(0.368, G);
+	aux2 = vmul_u32(aux2);
+	aux3 = vmul_u32(0.071, B);
+	aux3 = vmul_u32(aux3);
+	aux4 = vsub_u32(aux1, aux2);
+	aux4 = vsub_u32(aux4, aux3);
+	V = vadd_u32(aux4, 128);	
+	//V =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128;
+	
+	aux1 = vmul_u32(0.148, R);
+	aux1 = vneg_u32(aux1);
+	aux2 = vmul_u32(0.368, G);
+	aux2 = vmul_u32(aux2);
+	aux3 = vmul_u32(0.071, B);
+	aux3 = vmul_u32(aux3);
+	aux4 = vsub_u32(aux1, aux2);
+	aux4 = vsub_u32(aux4, aux3);
+	U = vadd_u32(aux4, 128);
+	//U = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128;
+
+ 	if (Y > 255) {
+		Y = 255;
+	}
+
+	if (U > 255) {
+		U = 255;
+	}
+
+	if (V > 255) {
+		V = 255;
+	}
+
+	if (Y < 0) {
+		Y = 0;
+	}
+	
+	if (U < 0) {
+		U = 0;
+	}
+
+	if (V < 0) {
+		V = 0;
+	}
+
+	pixel[0] = Y;
+   	pixel[1] = U;
+  	pixel[2] = V;
+   	pixel[3] = 0;
+
+	return pixel32;
+}
+
+void rgb2yuv(char *input_image, char *output_image){
+
+	FILE *in, *out;
+	int32_t R, G, B, i, size;	
+	uint32_t pixelRGB, pixel32;
+	unsigned char pixelYUV[3];
+
+	in = fopen(input_image, "rb");
+	out = fopen(output_image, "wb");
+	if (!in  ||  !out) {
+		printf("Error..\n");
+	}
+	
+	size = IMAGE_WIDTH*IMAGE_HEIGHT;
+	for(i=0; i<size; i++){
+		fread(&pixelRGB, 3, 1, in);
+		R  = ((pixelRGB & 0x000000ff));
+		G  = ((pixelRGB & 0x0000ff00)>>8);
+		B  = ((pixelRGB & 0x00ff0000)>>16);
+	
+		pixel32 = rgb2yuvPixel(R, G, B);
+		pixelYUV[0] = (pixel32 & 0x000000ff);
+		pixelYUV[1] = (pixel32 & 0x0000ff00) >> 8;
+		pixelYUV[2] = (pixel32 & 0x00ff0000) >> 16;
+
+		fwrite(pixelYUV, 3, 1, out);
+	}
+	
+	fclose(in);
+	fclose(out);
+
+}
+
+
+int main (int argc, char **argv) {
+	
+	clock_t t;
+	
+	int i = 0;
+	int opt = -1;
+	int rgbFlag = 0;
+	int yuvFlag = 0;
+	int infoAuhtorFlag = 0;
+	int infoExcutionAppFlag = 0;
+	char *pathRGBFile;
+	char *pathYUVFile;
+	
+	char usageMessage[] = "\n# USAGE MODE: \n"
+		"./rgb2yuv_c [ -i RGBfile ] [ -o YUVfile ] [-h] [-a] \n"
+		"-i RGBfile specifies the RGB file to be converted. \n"
+		"-o YUVfile specifies the output file name. \n"
+		"-a displays the information of the author of the program. \n"
+		"-h displays the usage message to let the user know how to execute the application; \n"
+		"Yocto prompt: \n"
+		"rgb2yuv_c -i image.rgb -o outputC.yuv \n";
+	    
+	char authorsInfo[] = "\n# AUTHORS INFORMATION\n"
+		"# Tecnologico de Costa Rica (www.tec.ac.cr)\n"
+		"# Course: MP-6171 High Performance Embedded Systems\n"
+		"# Developers Name: Verny Morales and Luis Carlos Alvarez\n"
+		"# Developers email: verny.morales@gmail.com and lcam03@gmail.com\n";
+	
+	while ((opt = getopt(argc, argv, "ioah")) != -1) {
+        i++;
+        switch(opt) {
+		case 'i':
+			pathRGBFile = argv[i+1];
+			rgbFlag = 1;
+			i++;
+			break;
+		case 'o':
+			pathYUVFile = argv[i+1];
+			yuvFlag = 1;
+			i++;
+			break;
+		case 'a':
+                	infoAuhtorFlag = 1;
+                	break;
+            	case 'h':
+		        infoExcutionAppFlag = 1;
+		        break;
+		default:
+			printf("Error..");
+		 }
+    	}
+
+	if (infoAuhtorFlag == 1){
+		printf("%s", authorsInfo);
+	}
+
+	if (infoExcutionAppFlag == 1){
+	   	printf("%s", usageMessage);
+	}
+
+	if (rgbFlag == 1 && yuvFlag == 1){
+		t = clock();
+		rgb2yuv(pathRGBFile, pathYUVFile);
+		t = clock() - t;
+		printf ("It took me %ld clicks (%f seconds).\n",t,((float)t)/CLOCKS_PER_SEC);
+	}
+
+	return 0;
+}
 
