@@ -1,6 +1,6 @@
 
-//g++ rgb2yuv_cpp.cpp -o rgb2yuv_cpp `pkg-config --cflags opencv4 --libs opencv4`
-//./rgb2yuv_cpp -i image.jpg -o outputCJPG.yuv
+//g++ rgb2yuv_OpenCV.cpp -o rgb2yuv_OpenCV `pkg-config --cflags opencv4 --libs opencv4`
+//./rgb2yuv_OpenCV.cpp -i image.jpg -o outputOpenCV.yuv
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
