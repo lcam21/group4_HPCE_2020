@@ -1,0 +1,46 @@
+# For pi.c
+pi with 1000000000 steps is 3.141593 in 7.485337 seconds
+pi with 1000000000 steps is 3.141593 in 7.256643 seconds
+pi with 1000000000 steps is 3.141593 in 7.250302 seconds
+pi with 1000000000 steps is 3.141593 in 7.252224 seconds
+pi with 1000000000 steps is 3.141593 in 7.263049 seconds
+
+# For pi_omp_private.c
+pi with 1000000000 steps is 3.141593 in 3.883163 seconds
+pi with 1000000000 steps is 3.141593 in 3.817577 seconds
+pi with 1000000000 steps is 3.141593 in 3.817584 seconds
+pi with 1000000000 steps is 3.141593 in 3.818912 seconds
+pi with 1000000000 steps is 3.141593 in 3.816412 seconds
+ 
+# For pi_omp_threads.c
+num_threads = 1
+pi with 1000000000 steps is 3.141593 in 7.280377 seconds
+pi with 1000000000 steps is 3.141593 in 7.248466 seconds
+pi with 1000000000 steps is 3.141593 in 7.250913 seconds
+pi with 1000000000 steps is 3.141593 in 7.245854 seconds
+pi with 1000000000 steps is 3.141593 in 7.244197 seconds
+num_threads = 2
+pi with 1000000000 steps is 3.141593 in 3.815364 seconds
+pi with 1000000000 steps is 3.141593 in 3.821761 seconds
+pi with 1000000000 steps is 3.141593 in 3.818106 seconds
+pi with 1000000000 steps is 3.141593 in 3.816362 seconds
+pi with 1000000000 steps is 3.141593 in 3.819499 seconds
+num_threads = 3
+pi with 1000000000 steps is 3.141593 in 4.947803 seconds
+pi with 1000000000 steps is 3.141593 in 4.947674 seconds
+pi with 1000000000 steps is 3.141593 in 4.027836 seconds
+pi with 1000000000 steps is 3.141593 in 4.807351 seconds
+pi with 1000000000 steps is 3.141593 in 4.114975 seconds
+num_threads = 4
+pi with 1000000000 steps is 3.141593 in 3.819679 seconds
+pi with 1000000000 steps is 3.141593 in 3.815076 seconds
+pi with 1000000000 steps is 3.141593 in 3.821164 seconds
+pi with 1000000000 steps is 3.141593 in 3.811898 seconds
+pi with 1000000000 steps is 3.141593 in 3.815349 seconds
+ 
+# For pi_omp_teams.c
+pi with 1000000000 steps is 3.141593 in 3.816749 seconds
+pi with 1000000000 steps is 3.141593 in 3.816670 seconds
+pi with 1000000000 steps is 3.141593 in 3.817644 seconds
+pi with 1000000000 steps is 3.141593 in 3.815545 seconds
+pi with 1000000000 steps is 3.141593 in 3.814645 seconds
