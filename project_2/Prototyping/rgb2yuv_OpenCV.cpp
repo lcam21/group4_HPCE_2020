@@ -1,12 +1,13 @@
 
 //g++ rgb2yuv_OpenCV.cpp -o rgb2yuv_OpenCV `pkg-config --cflags opencv4 --libs opencv4`
-//./rgb2yuv_OpenCV.cpp -i image.jpg -o outputOpenCV.yuv
+//./rgb2yuv_OpenCV -i image.jpg -o outputOpenCV.yuv
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
 #include <unistd.h>
+#include <time.h>
 
 using namespace std;
 using namespace cv;
@@ -21,7 +22,6 @@ void saveYUV(Mat matYUV, char *fileNameYUV){
 	unsigned char* pYuvBuf = new unsigned char[bufLen];
 	
 	pFileYuv = fopen(fileNameYUV, "wb");
-	printf("Saving  YUV file..\n");
 	fwrite(matYUV.data, sizeof(unsigned char), bufLen, pFileYuv);
 	fclose(pFileYuv);
 
@@ -33,10 +33,8 @@ void rgb2yuv (char *input_image, char *output_image){
 
 	Mat matRGB, matYUV;
 	
-	printf("Opening the image..\n");
 	matRGB = imread(input_image, IMREAD_COLOR);
 
-	printf("Converting  RGB  to YUV..\n");
 	cvtColor(matRGB, matYUV, COLOR_BGR2YUV);
 	
 	saveYUV(matYUV, output_image);
@@ -45,8 +43,9 @@ void rgb2yuv (char *input_image, char *output_image){
 
 int main (int argc, char **argv) {
 	
+	clock_t t;
 	int i = 0;
-    	int opt = -1;
+    int opt = -1;
 	int rgbFlag = 0;
 	int yuvFlag = 0;
 	int infoAuhtorFlag = 0;
@@ -102,7 +101,10 @@ int main (int argc, char **argv) {
 	}
 
 	if (rgbFlag == 1 && yuvFlag == 1){
+		t = clock();
 		rgb2yuv (pathRGBFile, pathYUVFile);
+		t = clock() - t;
+		printf ("It took me %ld clicks (%f seconds).\n",t,((float)t)/CLOCKS_PER_SEC);
 	}
 
 	return 0;
