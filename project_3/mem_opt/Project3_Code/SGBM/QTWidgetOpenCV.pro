@@ -19,6 +19,7 @@ unix:INCLUDEPATH += /usr/lib
 unix:LIBS += -L/usr/local/lib -lopencv_calib3d -lopencv_imgcodecs -lopencv_core -lopencv_features2d -lopencv_flann -lopencv_highgui -lopencv_imgproc -lgomp
 unix:LIBS += -L/usr/lib
 unix:LIBS += -L/usr/local/lib
+unix:LIBS += -fopenmp
 
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_calib3d -lopencv_imgcodecs -lopencv_core -lopencv_features2d -lopencv_flann -lopencv_highgui -lopencv_imgproc -lgomp
 
@@ -84,6 +85,8 @@ QMAKE_CXXFLAGS_DEBUG -= -O2
 QMAKE_CXXFLAGS_DEBUG *= -O3 -fopenmp
 
 #QMAKE_CXXFLAGS += -mfpu=neon -mfloat-abi=hard
+
+QMAKE_CXXFLAGS += -fopenmp
 
 DISTFILES += \
     README.md

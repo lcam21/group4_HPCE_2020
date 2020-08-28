@@ -205,8 +205,8 @@ int MainWindow::on_B_Run_clicked()
     m_pStereoImg->SetMinDisp(static_cast<int16_t>(ui->P_MinDisp->text().toInt()));
     m_pStereoImg->SetMaxDisp(static_cast<int16_t>(ui->P_MaxDisp->text().toInt()));
     m_pStereoImg->SetBlockSize(static_cast<uint8_t>(ui->P_m_u8BlockSize->text().toInt()));
-    m_pStereoImg->SetP1(static_cast<uint8_t>(ui->P_P1->text().toInt()));
-    m_pStereoImg->SetP2(static_cast<uint8_t>(ui->P_P2->text().toInt()));
+    m_pStereoImg->SetP1(static_cast<uint16_t>(ui->P_P1->text().toInt()));
+    m_pStereoImg->SetP2(static_cast<uint16_t>(ui->P_P2->text().toInt()));
     m_pStereoImg->SetUniqueRatio(static_cast<uint8_t>(ui->P_UniqRatio->text().toInt()));
     m_pStereoImg->SetNumOfDirections(static_cast<uint8_t>(ui->P_SGBMDir->text().toInt()));
 
@@ -283,6 +283,8 @@ int MainWindow::on_B_Run_clicked()
 
     //--------------------Set the RUN button green when computation is over-------------------------
     ui->B_Run->setStyleSheet("border: 1px; background-color: rgb(78, 154, 6)"); ui->B_Run->repaint();
+
+    ui->L_TIME->setText(QString::number(m_pStereoImg->run_time));
     return 0;
 }
 

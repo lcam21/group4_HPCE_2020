@@ -152,25 +152,27 @@ void StereoFPGA::compute_census_transform(cv::Mat img, uint64_t *ct)
     // Notes:
     //Limits are set so that only valid pixels from the images are considered -> no padding is required
     //The uint64_t data structure is used to manage large BlockSize. However for a BlockSize of up to 5x5 pixels uint32_t should be sufficient
+    //#pragma omp parallel for collapse(2) shared(img, ct) //-> NO FUNCIONA. no paraleliza
     for (int i=m_u8BlockSize_half; i<img.rows-m_u8BlockSize_half; i++) {
-        for (int j=m_u8BlockSize_half; j<img.cols-m_u8BlockSize_half; j++) {
-            uint64_t temp=0;
-            for (int ki=i-m_u8BlockSize_half; ki<=i+m_u8BlockSize_half; ki++) {
-                for (int kj=j-m_u8BlockSize_half; kj<=j+m_u8BlockSize_half; kj++) {
-                    unsigned char ref;
-                    ref = img.at<unsigned char>(ki,kj);
-                    if (ki!=i || kj!=j) {
-                        temp = temp << 1;
-                        if (ref < img.at<unsigned char>(i,j) ) {
-                            temp = temp | 1;
+            for (int j=m_u8BlockSize_half; j<img.cols-m_u8BlockSize_half; j++) {
+                uint64_t temp=0;
+                //#pragma omp parallel for collapse(2) shared(img, ct, i ,j, temp) //-> NO FUNCIONA
+                for (int ki=i-m_u8BlockSize_half; ki<=i+m_u8BlockSize_half; ki++) {
+                    for (int kj=j-m_u8BlockSize_half; kj<=j+m_u8BlockSize_half; kj++) {
+                        unsigned char ref;
+                        ref = img.at<unsigned char>(ki,kj);
+                        if (ki!=i || kj!=j) {
+                            temp = temp << 1;
+                            if (ref < img.at<unsigned char>(i,j) ) {
+                                temp = temp | 1;
+                            }
                         }
                     }
                 }
+                ct[(i-m_u8BlockSize_half)*(img.cols-m_u8BlockSize_half*2)+j-m_u8BlockSize_half] = temp;
             }
-            ct[(i-m_u8BlockSize_half)*(img.cols-m_u8BlockSize_half*2)+j-m_u8BlockSize_half] = temp;
         }
-    }
-} // end compute_census_transform()
+    } // end compute_census_transform()
 
 
 int StereoFPGA::compute_hamming_distance (uint64_t a, uint64_t b)
@@ -182,6 +184,8 @@ int StereoFPGA::compute_hamming_distance (uint64_t a, uint64_t b)
     int sum = 0;
 
     tmp = a^b;
+
+    //#pragma omp parallel for reduction(+:sum) //->Paraleliza pero incrementa el tiempo
     for(int i=0;i<64;i++){
         if(tmp&0x1<<i){
             sum ++;
@@ -196,6 +200,8 @@ void StereoFPGA::compute_hamming(uint64_t *ct1, uint64_t *ct2, int *accumulatedC
     //#######################################################################################
     //Hamming Distance as cost initialization
     //#######################################################################################
+
+    #pragma omp parallel for collapse(3) shared(ct1,ct2, accumulatedCost) //-> No paraleliza, mejora el tiempo un poco
     for (int i=m_u16yMin; i<m_u16yMax; i++) {
         for (int j=m_u16xMin; j<m_u16xMax; j++) {
             for (int d=0; d<m_u16TotalDisp; d++) {
@@ -209,6 +215,7 @@ void StereoFPGA::compute_hamming(uint64_t *ct1, uint64_t *ct2, int *accumulatedC
 
 void StereoFPGA::init_Lr(int *Lr, int *initCost) {
     int sizeOfCpd = m_u16height_after_census*m_u16width_after_census*m_u16TotalDisp;
+    //#pragma omp parallel for collapse(2) shared(Lr,initCost) //NO FUNCIONA, no paraleliza
     for (int r=0; r<m_u8Directions; r++) {
         for (int i=0; i<sizeOfCpd; i++) {
             Lr[r*sizeOfCpd+i] = initCost[i];
@@ -218,7 +225,9 @@ void StereoFPGA::init_Lr(int *Lr, int *initCost) {
 
 int StereoFPGA::find_minLri(int *Lrpr) {
     int minLri = INT_MAX;
+    //#pragma omp parallel for reduction(min:minLri) shared(Lrpr) //->Paraleliza pero incrementa el tiempo
     for (int i=0; i<m_u16TotalDisp; i++) {
+        //minLri = min(minLri,Lrpr[i]);
         if (minLri > Lrpr[i]) {
             minLri = Lrpr[i];
         }
@@ -262,7 +271,7 @@ void StereoFPGA::cost_computation(int *Lr, int *initCost) {
         else if (r==4) {
             iDisp = 0; jDisp = 1;
         }
-
+        #pragma omp parallel for collapse(2) shared(iDisp, jDisp, Lr, initCost, r) //->Paraleliza, mejora en tiempo, resultado no optimo
         for (int i=0; i<m_u16height_after_census; i++) {
             for (int j=0; j<m_u16width_after_census; j++) {
                 // Compute p-r
@@ -308,6 +317,7 @@ void StereoFPGA::cost_aggregation(int *aggregatedCost, int *Lr)
     //#######################################################################################
     //          SGBM Cost Aggregation
     //#######################################################################################
+    #pragma omp parallel for collapse(3) shared(aggregatedCost, Lr) //-> No paraleliza, mejora el tiempo un poco
     for (int i=0; i<m_u16height_after_census; i++)
     {
         for (int j=0; j<m_u16width_after_census; j++)
@@ -348,7 +358,7 @@ int StereoFPGA::compute_SGM(int *initCost, cv::Mat *disparitySGBM)
 
 void saveDisparityMap(int *disparity, cv::Mat *disparityMap, float_t m_fFactor) {
     int width = disparityMap->cols;
-
+    //#pragma omp parallel for collapse(2) shared(disparityMap, m_fFactor, width) //-> No paraleliza, mejora el tiempo un poco
     for (int i = 0; i < disparityMap->rows; ++i) {
         for (int j = 0; j < width; ++j) {
             if(255 == disparity[i*width+j])
@@ -371,6 +381,7 @@ void StereoFPGA::calc_disp(int *Cost, cv::Mat *disparityBM)
     //#######################################################################################
     int *bm_output = new int[m_u16height_after_census * m_u16width_after_census];
 
+    //#pragma omp parallel for collapse(2) shared(Cost, bm_output) //-> No paraleliza, mejora el tiempo un poco
     for (int i=0; i<m_u16height_after_census; i++) {
         for (int j=0; j<m_u16width_after_census; j++) {
             int *costPtr = Cost + (i*m_u16width_after_census+j)*m_u16TotalDisp;

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <omp.h>
 
 
 StereoFPGA::StereoFPGA() : StereoAlgo ()
@@ -29,6 +30,8 @@ void StereoFPGA::SetNumOfDirections(uint8_t u8NewDirect)
 
 void StereoFPGA::ComputeAlgo(cv::Mat LeftImg, cv::Mat RightImg, cv::Mat *DepthImg)
 {
+    start_time = omp_get_wtime();
+
     //Compute some extra parameters based on the parameters from the GUI
     m_u16TotalDisp = abs(m_s16MaxDisp - m_s16MinDisp);
     m_fFactor = 1;
@@ -74,22 +77,20 @@ void StereoFPGA::ComputeAlgo(cv::Mat LeftImg, cv::Mat RightImg, cv::Mat *DepthIm
     //##################################################################################
 
     //Memory for the census-transformed data
-    //uint64_t *ct1 = new uint64_t[m_u16height_after_census*m_u16width_after_census];
-    uint32_t *ct1 = new uint32_t[m_u16height_after_census*m_u16width_after_census];
+    uint64_t *ct1 = new uint64_t[m_u16height_after_census*m_u16width_after_census];
     if (nullptr == ct1) {
         printf("Memory allocation failed for ct1..! \n");
         return;
     }
 
-    //uint64_t *ct2 = new uint64_t[m_u16height_after_census*m_u16width_after_census];
-    uint32_t *ct2 = new uint32_t[m_u16height_after_census*m_u16width_after_census];
+    uint64_t *ct2 = new uint64_t[m_u16height_after_census*m_u16width_after_census];
     if (nullptr == ct2) {
         printf("Memory allocation failed for ct2..! \n");
         return;
     }
 
     // Memory to store cost of size: (m_u16height_after_census) * (m_u16width_after_census) * (number of disparities)
-    uint32_t u32SizeOfInitCost = (m_u16height_after_census)*(m_u16width_after_census)*m_u16TotalDisp;
+    int u32SizeOfInitCost = (m_u16height_after_census)*(m_u16width_after_census)*m_u16TotalDisp;
     m_ActiveInitCost = new int[u32SizeOfInitCost];
 
     //##################################################################################
@@ -126,6 +127,9 @@ void StereoFPGA::ComputeAlgo(cv::Mat LeftImg, cv::Mat RightImg, cv::Mat *DepthIm
     disparitySGBM.copyTo(*DepthImg);
 
 
+    run_time = omp_get_wtime() - start_time;
+    printf("%lf seconds\n", run_time);
+
     // Free Memory
     delete [] ct1;
     delete [] ct2;
@@ -139,7 +143,7 @@ void StereoFPGA::ComputeAlgo(cv::Mat LeftImg, cv::Mat RightImg, cv::Mat *DepthIm
 //       Private Methods
 //##################################################################################
 
-void StereoFPGA::compute_census_transform(cv::Mat img, uint32_t *ct)
+void StereoFPGA::compute_census_transform(cv::Mat img, uint64_t *ct)
 {
     //##################################################################################
     //       Census Transform
@@ -169,7 +173,7 @@ void StereoFPGA::compute_census_transform(cv::Mat img, uint32_t *ct)
 } // end compute_census_transform()
 
 
-int StereoFPGA::compute_hamming_distance (uint32_t a, uint32_t b)
+int StereoFPGA::compute_hamming_distance (uint64_t a, uint64_t b)
 {
     //#######################################################################################
     //Hamming Distance as cost initialization
@@ -187,7 +191,7 @@ int StereoFPGA::compute_hamming_distance (uint32_t a, uint32_t b)
 } // end compute_hamming_distance()
 
 
-void StereoFPGA::compute_hamming(uint32_t *ct1, uint32_t *ct2, int *accumulatedCost)
+void StereoFPGA::compute_hamming(uint64_t *ct1, uint64_t *ct2, int *accumulatedCost)
 {
     //#######################################################################################
     //Hamming Distance as cost initialization
@@ -280,15 +284,15 @@ void StereoFPGA::cost_computation(int *Lr, int *initCost) {
                         int minLri = find_minLri(Lrpr);
                         int Lrpdm1, Lrpdp1;
                         if (d==0)
-                            Lrpdm1 = INT_MAX-m_u8P1;
+                            Lrpdm1 = INT_MAX-m_u16P1;
                         else
                             Lrpdm1 = Lrpr[d-1];
                         if (d==m_u16TotalDisp-1)
-                            Lrpdp1 = INT_MAX-m_u8P1;
+                            Lrpdp1 = INT_MAX-m_u16P1;
                         else
                             Lrpdp1 = Lrpr[d+1];
 
-                        int v1 = find_min(Lrpr[d], Lrpdm1+m_u8P1, Lrpdp1+m_u8P1, minLri+m_u8P2);
+                        int v1 = find_min(Lrpr[d], Lrpdm1+m_u16P1, Lrpdp1+m_u16P1, minLri+m_u16P2);
 
                         tmp = Cpd + v1 - minLri;
                     }
@@ -342,7 +346,7 @@ int StereoFPGA::compute_SGM(int *initCost, cv::Mat *disparitySGBM)
     return 0;
 }
 
-void saveDisparityMap(int *disparity, cv::Mat *disparityMap, uint8_t m_fFactor) {
+void saveDisparityMap(int *disparity, cv::Mat *disparityMap, float_t m_fFactor) {
     int width = disparityMap->cols;
 
     for (int i = 0; i < disparityMap->rows; ++i) {

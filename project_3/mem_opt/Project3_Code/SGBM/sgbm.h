@@ -19,14 +19,15 @@ public:
   void ComputeAlgo (cv::Mat LeftImg, cv::Mat RightImg, cv::Mat * DepthImg);
   uint16_t m_u16xMin, m_u16xMax, m_u16yMin, m_u16yMax;
   uint8_t m_u8BlockSize_half;
+  double start_time, run_time;
 
 private:
     /*********************************
      * Functions/Variables Deklaration
      *********************************/
-  void compute_census_transform (cv::Mat img, uint32_t * ct);
-  int compute_hamming_distance (uint32_t a, uint32_t b);
-  void compute_hamming (uint32_t * ct1, uint32_t * ct2, int *accumulatedCost);
+  void compute_census_transform (cv::Mat img, uint64_t * ct);
+  int compute_hamming_distance (uint64_t a, uint64_t b);
+  void compute_hamming (uint64_t * ct1, uint64_t * ct2, int *accumulatedCost);
 
   int compute_SGM (int *initCost, cv::Mat * disparitySGBM);
   void cost_aggregation (int *aggregatedCost, int *Lr);
@@ -38,7 +39,7 @@ private:
 
   uint8_t m_u8Directions;
   uint16_t m_u16height_after_census, m_u16width_after_census;
-  uint8_t m_fFactor;
+  float_t m_fFactor;
   uint16_t m_u16TotalDisp;
 
 

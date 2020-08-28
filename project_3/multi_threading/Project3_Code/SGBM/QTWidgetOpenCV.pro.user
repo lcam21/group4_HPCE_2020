@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.5.2, 2020-08-26T21:11:24. -->
+<!-- Written by QtCreator 4.5.2, 2020-08-27T23:59:20. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -304,7 +304,7 @@
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">QTWidgetOpenCV</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">QTWidgetOpenCV2</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/luis/group4_HPCE_2020/project_3/Sources/Project3_Code/SGBM/QTWidgetOpenCV.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/luis/group4_HPCE_2020/project_3/multi_threading/Project3_Code/SGBM/QTWidgetOpenCV.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments"></value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">QTWidgetOpenCV.pro</value>

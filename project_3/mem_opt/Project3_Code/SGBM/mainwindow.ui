@@ -1036,6 +1036,19 @@
      <string>../Test_data/</string>
     </property>
    </widget>
+   <widget class="QLabel" name="L_TIME">
+    <property name="geometry">
+     <rect>
+      <x>1590</x>
+      <y>90</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>?</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
