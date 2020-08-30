@@ -144,8 +144,9 @@ __global__ void cost_aggregation(int *aggregatedCost, int *Lr, uint16_t m_u16hei
     //#######################################################################################
     //          SGBM Cost Aggregation
     //#######################################################################################
-    for (int i=0; i<m_u16height_after_census; i++)
-    {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < m_u16height_after_census) {
+    //for (int i=0; i<m_u16height_after_census; i++) {
         for (int j=0; j<m_u16width_after_census; j++)
         {
             for (int d=0; d<m_u16TotalDisp; d++)
