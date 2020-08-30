@@ -14,26 +14,25 @@ TEMPLATE = app
 unix:INCLUDEPATH += /usr/local/lib
 unix:INCLUDEPATH += /usr/lib
 
-unix:LIBS += `pkg-config opencv4 --cflags --libs`
+#unix:LIBS += `pkg-config opencv4 --cflags --libs`
+#unix:LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui
+unix:LIBS += -L/usr/local/lib -lopencv_calib3d -lopencv_imgcodecs -lopencv_core -lopencv_features2d -lopencv_flann -lopencv_highgui -lopencv_imgproc -lgomp
 unix:LIBS += -L/usr/lib
 unix:LIBS += -L/usr/local/lib
 
-
 unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lopencv_calib3d -lopencv_imgcodecs -lopencv_core -lopencv_features2d -lopencv_flann -lopencv_highgui -lopencv_imgproc -lgomp
 
-unix:INCLUDEPATH += /usr/local/include/opencv4/
-unix:DEPENDPATH += /usr/local/include/opencv4/
+unix:INCLUDEPATH += /usr/local/include/opencv4
+unix:DEPENDPATH += /usr/local/include/opencv4
 
 
 win32:INCLUDEPATH += ..\install\include
-
 win32:LIBS += ..\install\x86\mingw\bin\libopencv_core410.dll
 win32:LIBS += ..\install\x86\mingw\bin\libopencv_highgui410.dll
 win32:LIBS += ..\install\x86\mingw\bin\libopencv_imgcodecs410.dll
 win32:LIBS += ..\install\x86\mingw\bin\libopencv_imgproc410.dll
 win32:LIBS += ..\install\x86\mingw\bin\libopencv_features2d410.dll
 win32:LIBS += ..\install\x86\mingw\bin\libopencv_calib3d410.dll
-
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
