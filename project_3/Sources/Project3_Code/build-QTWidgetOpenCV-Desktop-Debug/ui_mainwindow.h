@@ -74,6 +74,8 @@ public:
     QLabel *L_SGBM_3;
     QLabel *L_Sources;
     QLineEdit *P_Source;
+    QLabel *label;
+    QLabel *L_TIME;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -303,6 +305,12 @@ public:
         P_Source = new QLineEdit(centralWidget);
         P_Source->setObjectName(QStringLiteral("P_Source"));
         P_Source->setGeometry(QRect(140, 20, 231, 20));
+        label = new QLabel(centralWidget);
+        label->setObjectName(QStringLiteral("label"));
+        label->setGeometry(QRect(1520, 70, 41, 20));
+        L_TIME = new QLabel(centralWidget);
+        L_TIME->setObjectName(QStringLiteral("L_TIME"));
+        L_TIME->setGeometry(QRect(1570, 70, 67, 17));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -364,6 +372,8 @@ public:
         L_SGBM_3->setText(QApplication::translate("MainWindow", "Cost-Function Ploting / Histogram", Q_NULLPTR));
         L_Sources->setText(QApplication::translate("MainWindow", "Source Directory:", Q_NULLPTR));
         P_Source->setText(QApplication::translate("MainWindow", "../Test_data/", Q_NULLPTR));
+        label->setText(QApplication::translate("MainWindow", "Time:", Q_NULLPTR));
+        L_TIME->setText(QApplication::translate("MainWindow", "?", Q_NULLPTR));
     } // retranslateUi
 
 };

@@ -1036,11 +1036,24 @@
      <string>../Test_data/</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>1520</x>
+      <y>70</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Time:</string>
+    </property>
+   </widget>
    <widget class="QLabel" name="L_TIME">
     <property name="geometry">
      <rect>
-      <x>1590</x>
-      <y>90</y>
+      <x>1570</x>
+      <y>70</y>
       <width>67</width>
       <height>17</height>
      </rect>

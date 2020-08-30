@@ -285,6 +285,7 @@ int MainWindow::on_B_Run_clicked()
     ui->B_Run->setStyleSheet("border: 1px; background-color: rgb(78, 154, 6)"); ui->B_Run->repaint();
 
     ui->L_TIME->setText(QString::number(m_pStereoImg->run_time));
+
     return 0;
 }
 

@@ -126,7 +126,6 @@ void StereoFPGA::ComputeAlgo(cv::Mat LeftImg, cv::Mat RightImg, cv::Mat *DepthIm
     // Copy result to be shown in the GUI
     disparitySGBM.copyTo(*DepthImg);
 
-
     run_time = omp_get_wtime() - start_time;
     printf("%lf seconds\n", run_time);
 

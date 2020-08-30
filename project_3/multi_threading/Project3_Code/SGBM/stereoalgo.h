@@ -66,10 +66,10 @@ protected:
     uint8_t m_u8UniqueRatio;
 
     // SGBM
-    uint8_t m_u16P1;
-    uint8_t m_u16P2;
     //uint16_t m_u16P1;
     //uint16_t m_u16P2;
+    uint8_t m_u16P1;
+    uint8_t m_u16P2;
 
     e_StereoAlgoType m_eStereoAlgo = eStereoAlgoType_NoAlgo;
 
